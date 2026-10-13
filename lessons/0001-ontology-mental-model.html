@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>0001 · Ontology 心智模型：不是数据库，也不是语义层</title>
+<link rel="stylesheet" href="../assets/course.css">
+</head>
+<body>
+<div class="page">
+
+<div class="lesson-header">
+  <p class="lesson-kicker">Lesson 0001 · 约 10 分钟</p>
+  <h1>Ontology 心智模型：不是数据库，也不是语义层</h1>
+  <p class="lesson-meta">金融/保险案例 · 配套速查：<a href="../reference/ontology-core-concepts.html">核心概念速查表</a></p>
+</div>
+
+<h2>为什么从这一课开始</h2>
+<p>你要做的决策是「是否在数仓、业务系统、AI Agent 之上自建统一本体层」。这个决策里最危险的词是"本体层"——它在行业里被混用于指数据库 schema、指标语义层、知识图谱。概念不清，后面的架构权衡全是空中楼阁。所以第一课只做一件事：把 <mark>Ontology 到底是什么、不是什么</mark>钉死。</p>
+
+<h2>官方定义</h2>
+<blockquote>
+  The Ontology is an <strong>operational layer</strong> for the organization. … a <strong>digital twin</strong>，把组织已整合的数字资产（数据集、模型）映射为它们所代表的现实业务概念。
+  <span class="cite">— <a href="https://www.palantir.com/docs/foundry/ontology/overview/">Ontology Overview · 官方文档</a></span>
+</blockquote>
+
+<div class="concept">
+  <span class="concept-label">拆解 · 两类元素</span>
+  <p><strong>语义元素</strong>（对象 / 属性 / 链接）回答：<em>业务世界里有什么？</em><br>
+  <strong>动力学元素</strong>（行动 / 函数）回答：<em>能对它做什么、怎么算？</em></p>
+  <p>只有语义元素的，叫语义层。<mark>两类齐备、且行动能写回源系统的</mark>，才是 Palantir 意义上的 Ontology。</p>
+</div>
+
+<h2>五分法：拆解任何业务场景</h2>
+<table>
+  <thead><tr><th>构件</th><th>一句话</th><th>金融示例</th></tr></thead>
+  <tbody>
+    <tr><td><strong>对象</strong> <span class="term-en">Object</span></td><td>现实实体或<strong>事件</strong>的建模单元</td><td>客户、账户、保单、交易流水</td></tr>
+    <tr><td><strong>属性</strong> <span class="term-en">Property</span></td><td>对象的特征值</td><td>保额、风险等级</td></tr>
+    <tr><td><strong>链接</strong> <span class="term-en">Link</span></td><td>对象间的关系（一等公民，不是运行时 join）</td><td>投保人—持有—保单</td></tr>
+    <tr><td><strong>行动</strong> <span class="term-en">Action</span></td><td>一次性提交的一组变更，<strong>写回</strong>源系统</td><td>冻结账户、批准理赔</td></tr>
+    <tr><td><strong>函数</strong> <span class="term-en">Function</span></td><td>以对象/对象集为输入输出的业务逻辑</td><td>欺诈评分</td></tr>
+  </tbody>
+</table>
+<p>精确定义见<a href="../reference/ontology-core-concepts.html#five-components">速查表 · 五大构件</a>。</p>
+
+<h2>它坐在数据之上，但不是数据</h2>
+<p>官方文档给了一个直白的对照：<code>dataset → object type</code>，<code>row → object</code>，<code>column → property</code>，<code>join → link type</code>（<a href="https://palantir.com/docs/foundry/ontology/core-concepts">Core Concepts</a>）。本体层是加在数据资产上的一层<strong>映射绑定</strong>——它不要求新建数据库，也不规定坐在数仓上。</p>
+
+<div class="takeaway">
+  <span class="concept-label">回应你的直觉</span>
+  <p>你在确立学习目标时说："本体论没有规定和数据仓库强绑定。"<strong>这是对的。</strong>对象的底层数据可以是批数据集、流、虚拟表或直连数据源；一个对象类型甚至可绑定多个源。本体层由它的<strong>角色</strong>定义（为人和 Agent 提供统一的语义 + 操作契约），不由底下的存储定义——数仓只是可选宿主之一。这个立场会成为你自建架构的基石，第 3 课专门展开。</p>
+</div>
+
+<h2>练习：六道分类题</h2>
+<p>每道题给出一个你业务里的场景，判断它最应建模为五分法中的哪一类。第 5 题有陷阱——答错比答对学到更多。</p>
+
+<div class="quiz" data-quiz='{
+  "title": "业务场景 → 本体构件",
+  "choices": ["对象 Object（实体或事件）", "属性 Property（特征值）", "链接 Link（对象间关系）", "行动 Action（变更与写回）", "函数 Function（计算逻辑）"],
+  "items": [
+    {
+      "stem": "客户「陈六」，男，42 岁，持身份证开户——「陈六」这个业务实体本身",
+      "answer": 0,
+      "explain": "现实实体建模为对象（object type 的一个实例）。他的性别、年龄、证件类型则是这个对象上的属性。"
+    },
+    {
+      "stem": "保单 POL-2026-8893 的保额为 100 万元——这个「100 万元」",
+      "answer": 1,
+      "explain": "具体实例上的取值是 property value；「保额」这个特征的定义是 property。官方对照：column → property，field value → property value。"
+    },
+    {
+      "stem": "「投保人陈六 持有 保单 POL-2026-8893」这层归属关系",
+      "answer": 2,
+      "explain": "两个对象类型之间的关系建模为 link type（官方对照：join → link）。链接是一等公民，查询时无需临时拼 join——这正是 Agent 不写 SQL 也能可靠遍历关系的原因。"
+    },
+    {
+      "stem": "风控 Agent 判定账户可疑，坐席点击「冻结账户」，账户状态变更写回核心银行系统",
+      "answer": 3,
+      "explain": "「想造成的一组变更 + 提交后写回源系统」正是 action type 的官方定义。这是 Ontology 区别于只读语义层的关键一跃。"
+    },
+    {
+      "stem": "昨夜清算系统落地的 3,204 笔转账流水记录",
+      "answer": 0,
+      "explain": "陷阱题：很多人选「行动」。区分标准——行动是「想引起的变化」，事件是「已发生的事实」。转账流水是既成事实，建模为事件对象（Transaction object type）；而「发起转账」这个意图才是行动。行动提交并执行后，才产生新的流水对象。这一区分是决策闭环的骨架，第 2 课专讲。"
+    },
+    {
+      "stem": "输入一个客户对象集合，输出每位客户的欺诈评分——这段被多处复用的代码逻辑",
+      "answer": 4,
+      "explain": "官方定义：function 是接收输入并返回输出的代码逻辑，原生支持以对象/对象集为输入。它可被行动、应用和 Agent 共同复用——业务逻辑只写一处。"
+    }
+  ]
+}'></div>
+<script src="../assets/quiz.js"></script>
+
+<h2>本课带走的一句话</h2>
+<div class="takeaway">
+  <span class="concept-label">心智模型</span>
+  <p><mark>Ontology = 业务的语义层（对象/属性/链接）+ 操作层（行动/函数）</mark>，它是对既有数据资产的映射绑定而非新的数据库，供人类应用与 AI Agent 统一读写。少了操作层，你建的就只是语义层。</p>
+</div>
+
+<h2>深入阅读（主推一个）</h2>
+<p><strong>主推</strong>：<a href="https://www.palantir.com/docs/foundry/ontology/overview/"><em>Ontology Overview</em> · Palantir 官方文档</a>——5 分钟，本课所有定义的原始出处。读完你会发现自己能逐句对应到今天的五分法。</p>
+<p>备选：<a href="https://palantir.com/docs/foundry/ontology/core-concepts">Core Concepts</a>（定义表全文）· <a href="../reference/ontology-core-concepts.html">本课配套速查表</a>（打印留存）</p>
+
+<div class="ask-teacher">
+  <strong>💬 我是你这门课的老师</strong>
+  任何不清楚的地方——比如"那理赔场景里的查勘报告算对象还是属性？"——直接回到对话里问我。带着你真实业务里的困惑来问，是这门课最快的学习方式。
+</div>
+
+<div class="lesson-footer">
+  <p>下一课预告 <strong>0002 · 事件 vs 行动：决策闭环的骨架</strong>——为什么"已发生的事实"和"想造成的变化"必须分开建模，以及它和事件溯源（event sourcing）的亲缘关系。</p>
+  <p><a href="../reference/ontology-core-concepts.html">📐 核心概念速查表</a> · <a href="0001-ontology-mental-model.html">本课</a></p>
+</div>
+
+</div>
+</body>
+</html>

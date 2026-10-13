@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>速查 · Palantir Ontology 核心概念</title>
+<link rel="stylesheet" href="../assets/course.css">
+</head>
+<body>
+<div class="page">
+
+<div class="lesson-header">
+  <p class="lesson-kicker">Reference · 参考文档</p>
+  <h1>Palantir Ontology 核心概念速查</h1>
+  <p class="lesson-meta">全部定义取自 Palantir 官方文档 · 打印友好 · 课程统一以此为准</p>
+</div>
+
+<h2 id="definition">一句话定义</h2>
+<blockquote>
+  The Ontology is an <strong>operational layer</strong> for the organization … a <strong>digital twin</strong> that maps datasets and models to the concepts they represent.
+  <span class="cite">— <a href="https://www.palantir.com/docs/foundry/ontology/overview/">Palantir Foundry Docs · Ontology Overview</a></span>
+</blockquote>
+<p>拆开看，它由两类元素构成：</p>
+<table>
+  <thead>
+    <tr><th>元素类别</th><th>包含</th><th>回答的问题</th></tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>语义元素</strong> <span class="term-en">semantic</span></td>
+      <td>对象、属性、链接</td>
+      <td>业务世界里<strong>有什么</strong>？</td>
+    </tr>
+    <tr>
+      <td><strong>动力学元素</strong> <span class="term-en">kinetic</span></td>
+      <td>行动、函数、动态权限</td>
+      <td>能对它<strong>做什么</strong>、<strong>怎么计算</strong>？</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2 id="five-components">五大构件</h2>
+<table>
+  <thead>
+    <tr><th>构件</th><th>官方定义（意译）</th><th>金融/保险示例</th></tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>对象类型</strong> <span class="term-en">Object Type</span></td>
+      <td>现实世界实体或事件的 schema 定义；单个实例称 <em>object</em>，实例集合称 <em>object set</em></td>
+      <td>客户、账户、保单、理赔案件、交易流水</td>
+    </tr>
+    <tr>
+      <td><strong>属性</strong> <span class="term-en">Property</span></td>
+      <td>实体或事件某项特征的 schema 定义；具体实例上的值称 <em>property value</em>。可跨对象类型共享（<em>shared property</em>）</td>
+      <td>保额、风险等级（可被账户/保单/贷款共用）</td>
+    </tr>
+    <tr>
+      <td><strong>链接类型</strong> <span class="term-en">Link Type</span></td>
+      <td>两个对象类型之间关系的 schema 定义；单个关系实例称 <em>link</em></td>
+      <td>投保人—持有—保单；账户—转入—交易</td>
+    </tr>
+    <tr>
+      <td><strong>行动类型</strong> <span class="term-en">Action Type</span></td>
+      <td>一组对对象、属性值、链接的<strong>变更/编辑</strong>的 schema 定义，可由用户一次性提交，并可触发副作用（写回源系统）</td>
+      <td>冻结账户、批准理赔、调整授信额度</td>
+    </tr>
+    <tr>
+      <td><strong>函数</strong> <span class="term-en">Function</span></td>
+      <td>一段代码逻辑，接收输入返回输出；原生支持以对象/对象集合为输入、读属性值，可被行动与应用复用</td>
+      <td>欺诈评分、集中度计算、定价模型调用</td>
+    </tr>
+  </tbody>
+</table>
+<p>另有 <strong>接口</strong> <span class="term-en">Interface</span>（描述对象类型的形状与能力，实现跨类型多态）与 <strong>Roles</strong>（本体资源的统一权限模型），进入落地设计时再展开。</p>
+
+<h2 id="mapping-table">数据 → 本体 的映射类比</h2>
+<p>官方文档给出的对照（这是理解"本体层是对数据资产的绑定"的关键）：</p>
+<table class="compact">
+  <thead>
+    <tr><th>数据世界</th><th>本体世界</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>dataset（数据集）</td><td>object type（对象类型）</td></tr>
+    <tr><td>row（行）</td><td>object（对象实例）</td></tr>
+    <tr><td>column（列）</td><td>property（属性）</td></tr>
+    <tr><td>field value（字段值）</td><td>property value（属性值）</td></tr>
+    <tr><td>join（连接）</td><td>link type（链接类型）</td></tr>
+  </tbody>
+</table>
+<p><span class="cite" style="font-size:0.8rem;color:var(--ink-faint);">出处：<a href="https://palantir.com/docs/foundry/ontology/core-concepts">Core Concepts · Docs</a></span></p>
+
+<h2 id="not-warehouse-bound">本体层不绑定数据仓库</h2>
+<p>对象的底层数据（backing data）可以来自多种资产：<strong>批数据集、流式数据、虚拟表、直连数据源</strong>，甚至一个对象类型绑定多个数据源（multi-datasource object type）。本体层由它的<strong>角色</strong>定义——为人和 AI 提供统一的业务语义与操作契约——而不是由"坐在哪个存储之上"定义。数仓只是可选的宿主之一。</p>
+<p><span class="cite" style="font-size:0.8rem;color:var(--ink-faint);">参考：<a href="https://palantir.com/docs/foundry/object-backend/overview">Ontology Architecture · Docs</a></span></p>
+
+<h2 id="vs-semantic-layer">语义层 vs Ontology</h2>
+<table>
+  <thead>
+    <tr><th>维度</th><th>传统语义层 / 指标层</th><th>Palantir Ontology</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>角色</td><td>查询/指标的只读抽象</td><td>组织的<strong>操作层</strong>（operational layer）</td></tr>
+    <tr><td>实体</td><td>逻辑视图、指标定义</td><td>有类型、有关系、<strong>可编辑</strong>的对象</td></tr>
+    <tr><td>行动</td><td>不支持</td><td>一等公民——Action 写回源系统</td></tr>
+    <tr><td>消费方</td><td>BI / 分析</td><td>分析 + 运营应用 + <strong>AI Agent</strong></td></tr>
+  </tbody>
+</table>
+
+<h2 id="oag">面向 AI 的关键词：OAG</h2>
+<p><strong>Ontology-Augmented Generation</strong>：让 LLM/Agent 的推理落在结构化、实时的运营数据与可执行的行动上，而不只是检索文档（RAG）。学术表述称其为 "an enterprise superset of RAG"（<a href="https://www.mdpi.com/2079-9292/14/18/3583">MDPI Electronics 2025</a>）。</p>
+
+<div class="lesson-footer">
+  <p>本文档是课程统一术语来源（glossary）。各课出现的中英术语以此为准：
+  对象 Object · 属性 Property · 链接 Link · 行动 Action · 函数 Function · 对象集 Object Set · 写回 Writeback · 操作层 Operational Layer · 数字孪生 Digital Twin · 本体增强生成 OAG。</p>
+</div>
+
+</div>
+</body>
+</html>
